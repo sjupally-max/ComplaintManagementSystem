@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from config import Config
 from models import db, Category
@@ -8,6 +10,7 @@ from routes import main_bp
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
     db.init_app(app)
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
@@ -21,5 +24,8 @@ def create_app():
     return app
 
 
+app = create_app()
+
+
 if __name__ == "__main__":
-    create_app().run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=False)
